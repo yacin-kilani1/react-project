@@ -1,6 +1,6 @@
 import * as React from "react";
 
-// Step 8: Log when Item renders
+// Item component
 const Item = ({ item }) => {
   console.log("Item renders");
   return (
@@ -8,32 +8,32 @@ const Item = ({ item }) => {
       <span>
         <a href={item.url}>{item.title}</a>
       </span>
-      <span>{item.author}</span>
-      <span>{item.num_comments} comments</span>
-      <span>{item.points} points</span>
+      <span> — {item.author}</span>
+      <span> | {item.num_comments} comments</span>
+      <span> | {item.points} points</span>
     </li>
   );
 };
 
-// Step 8: Log when List renders
-const List = (props) => {
+// List component
+const List = ({ list }) => {
   console.log("List renders");
   return (
     <ul>
-      {props.list.map((item) => (
+      {list.map((item) => (
         <Item key={item.objectID} item={item} />
       ))}
     </ul>
   );
 };
 
-// Step 7: Display searchTerm + Step 8: Log Search renders
+// Search component
 const Search = ({ searchTerm, onSearch }) => {
   console.log("Search renders");
 
   const handleChange = (event) => {
     console.log(event.target.value);
-    onSearch(event.target.value);
+    onSearch(event); // calls the handler in App
   };
 
   return (
@@ -50,12 +50,19 @@ const Search = ({ searchTerm, onSearch }) => {
   );
 };
 
+// App component
 function App() {
-  console.log("App renders"); // Step 8
+  console.log("App renders");
 
-  // Step 6: useState for searchTerm
+  // Step 6: searchTerm state
   const [searchTerm, setSearchTerm] = React.useState("");
 
+  // Step 10: callback handler in App
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Step 1: moved list into App
   const stories = [
     {
       title: "React",
@@ -75,6 +82,7 @@ function App() {
     },
   ];
 
+  // Step 14 & 15: case-insensitive filtering by author
   const filteredList = stories.filter((item) =>
     item.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -82,7 +90,7 @@ function App() {
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search searchTerm={searchTerm} onSearch={setSearchTerm} />
+      <Search searchTerm={searchTerm} onSearch={handleSearch} />
       <hr />
       <List list={filteredList} />
     </div>
