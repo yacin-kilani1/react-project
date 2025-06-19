@@ -1,21 +1,21 @@
 import * as React from "react";
 
-// Item component
-const Item = ({ item }) => {
+
+const Item = ({ item: { url, title, author, num_comments, points } }) => {
   console.log("Item renders");
   return (
     <li>
       <span>
-        <a href={item.url}>{item.title}</a>
+        <a href={url}>{title}</a>
       </span>
-      <span> — {item.author}</span>
-      <span> | {item.num_comments} comments</span>
-      <span> | {item.points} points</span>
+      <span> — {author}</span>
+      <span> | {num_comments} comments</span>
+      <span> | {points} points</span>
     </li>
   );
 };
 
-// List component
+
 const List = ({ list }) => {
   console.log("List renders");
   return (
@@ -27,13 +27,13 @@ const List = ({ list }) => {
   );
 };
 
-// Search component
+
 const Search = ({ searchTerm, onSearch }) => {
   console.log("Search renders");
 
   const handleChange = (event) => {
     console.log(event.target.value);
-    onSearch(event); // calls the handler in App
+    onSearch(event);
   };
 
   return (
@@ -45,24 +45,22 @@ const Search = ({ searchTerm, onSearch }) => {
         value={searchTerm}
         onChange={handleChange}
       />
-      <p>Searching for: <strong>{searchTerm}</strong></p>
+      <p>
+        Searching for: <strong>{searchTerm}</strong>
+      </p>
     </div>
   );
 };
 
-// App component
 function App() {
   console.log("App renders");
 
-  // Step 6: searchTerm state
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  // Step 10: callback handler in App
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  // Step 1: moved list into App
   const stories = [
     {
       title: "React",
@@ -82,7 +80,6 @@ function App() {
     },
   ];
 
-  // Step 14 & 15: case-insensitive filtering by author
   const filteredList = stories.filter((item) =>
     item.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
