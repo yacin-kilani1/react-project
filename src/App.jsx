@@ -1,5 +1,25 @@
 import * as React from "react";
 
+// InputWithLabel replaces Search (more reusable)
+const InputWithLabel = ({ id, value, onInputChange, type = "text", children }) => {
+  console.log("InputWithLabel renders");
+
+  return (
+    <div>
+      <label htmlFor={id}>{children}</label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+      <p>
+        Searching for: <strong>{value}</strong>
+      </p>
+    </div>
+  );
+};
+
 const Item = ({ item: { url, title, author, num_comments, points } }) => {
   console.log("Item renders");
   return (
@@ -22,30 +42,6 @@ const List = ({ list }) => {
         <Item key={item.objectID} item={item} />
       ))}
     </ul>
-  );
-};
-
-const Search = ({ searchTerm, onSearch }) => {
-  console.log("Search renders");
-
-  const handleChange = (event) => {
-    console.log(event.target.value);
-    onSearch(event);
-  };
-
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        type="text"
-        value={searchTerm}
-        onChange={handleChange}
-      />
-      <p>
-        Searching for: <strong>{searchTerm}</strong>
-      </p>
-    </div>
   );
 };
 
@@ -90,7 +86,15 @@ function App() {
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search searchTerm={searchTerm} onSearch={handleSearch} />
+
+      <InputWithLabel
+        id="search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      >
+        <strong>Search: </strong>
+      </InputWithLabel>
+
       <hr />
       <List list={filteredList} />
     </div>
