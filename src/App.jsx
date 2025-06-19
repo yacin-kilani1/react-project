@@ -1,18 +1,13 @@
 import * as React from "react";
 
-// InputWithLabel reusable component
-const InputWithLabel = ({ id, value, onInputChange, type = "text", children }) => {
-  console.log("InputWithLabel renders");
+// 1. Define the API endpoint
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
+const InputWithLabel = ({ id, value, onInputChange, type = "text", children }) => {
   return (
     <div>
       <label htmlFor={id}>{children}</label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onInputChange}
-      />
+      <input id={id} type={type} value={value} onChange={onInputChange} />
       <p>
         Searching for: <strong>{value}</strong>
       </p>
@@ -23,13 +18,9 @@ const InputWithLabel = ({ id, value, onInputChange, type = "text", children }) =
 const Item = ({ item, onRemoveItem }) => {
   const { url, title, author, num_comments, points } = item;
 
-  console.log("Item renders");
-
   return (
     <li>
-      <span>
-        <a href={url}>{title}</a>
-      </span>
+      <span><a href={url}>{title}</a></span>
       <span> — {author}</span>
       <span> | {num_comments} comments</span>
       <span> | {points} points</span>
@@ -44,7 +35,6 @@ const Item = ({ item, onRemoveItem }) => {
 };
 
 const List = ({ list, onRemoveItem }) => {
-  console.log("List renders");
   return (
     <ul>
       {list.map((item) => (
@@ -55,11 +45,24 @@ const List = ({ list, onRemoveItem }) => {
 };
 
 function App() {
-  console.log("App renders");
-
   const [searchTerm, setSearchTerm] = React.useState(
     localStorage.getItem("search") || ""
   );
+  const [stories, setStories] = React.useState([]);
+
+  // 2–5: Fetch from API when searchTerm changes
+  React.useEffect(() => {
+    if (!searchTerm) return;
+
+    fetch(`${API_ENDPOINT}${searchTerm}`)
+      .then((response) => response.json())
+      .then((result) => {
+        setStories(result.hits); // 5: update stories
+      })
+      .catch(() => {
+        // Handle error (optional for now)
+      });
+  }, [searchTerm]);
 
   React.useEffect(() => {
     localStorage.setItem("search", searchTerm);
@@ -69,36 +72,14 @@ function App() {
     setSearchTerm(event.target.value);
   };
 
-  const initialStories = [
-    {
-      title: "React",
-      url: "https://reactjs.org/",
-      author: "Jordan Walke",
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: "Redux",
-      url: "https://redux.js.org/",
-      author: "Dan Abramov, Andrew Clark",
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
-
-  const [stories, setStories] = React.useState(initialStories);
-
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter((story) => story.objectID !== item.objectID);
+    const newStories = stories.filter(
+      (story) => story.objectID !== item.objectID
+    );
     setStories(newStories);
   };
 
-  const filteredList = stories.filter((item) =>
-    item.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  // 6: Remove filteredList — stories now come from API
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -112,7 +93,8 @@ function App() {
       </InputWithLabel>
 
       <hr />
-      <List list={filteredList} onRemoveItem={handleRemoveStory} />
+      {/* 6: Pass API-fetched stories directly */}
+      <List list={stories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 }
