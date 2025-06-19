@@ -1,27 +1,36 @@
 import * as React from "react";
 
-// ✅ New Item component
-const Item = ({ item }) => (
-  <li>
-    <span>
-      <a href={item.url}>{item.title}</a>
-    </span>
-    <span>{item.author}</span>
-    <span>{item.num_comments} comments</span>
-    <span>{item.points} points</span>
-  </li>
-);
+// Step 8: Log when Item renders
+const Item = ({ item }) => {
+  console.log("Item renders");
+  return (
+    <li>
+      <span>
+        <a href={item.url}>{item.title}</a>
+      </span>
+      <span>{item.author}</span>
+      <span>{item.num_comments} comments</span>
+      <span>{item.points} points</span>
+    </li>
+  );
+};
 
-// ✅ List uses Item
-const List = (props) => (
-  <ul>
-    {props.list.map((item) => (
-      <Item key={item.objectID} item={item} />
-    ))}
-  </ul>
-);
+// Step 8: Log when List renders
+const List = (props) => {
+  console.log("List renders");
+  return (
+    <ul>
+      {props.list.map((item) => (
+        <Item key={item.objectID} item={item} />
+      ))}
+    </ul>
+  );
+};
 
+// Step 7: Display searchTerm + Step 8: Log Search renders
 const Search = ({ searchTerm, onSearch }) => {
+  console.log("Search renders");
+
   const handleChange = (event) => {
     console.log(event.target.value);
     onSearch(event.target.value);
@@ -36,11 +45,15 @@ const Search = ({ searchTerm, onSearch }) => {
         value={searchTerm}
         onChange={handleChange}
       />
+      <p>Searching for: <strong>{searchTerm}</strong></p>
     </div>
   );
 };
 
 function App() {
+  console.log("App renders"); // Step 8
+
+  // Step 6: useState for searchTerm
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const stories = [
