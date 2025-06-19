@@ -1,40 +1,25 @@
 import * as React from "react";
 
-const list = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
+// ✅ New Item component
+const Item = ({ item }) => (
+  <li>
+    <span>
+      <a href={item.url}>{item.title}</a>
+    </span>
+    <span>{item.author}</span>
+    <span>{item.num_comments} comments</span>
+    <span>{item.points} points</span>
+  </li>
+);
 
-function List({ items }) {
-  return (
-    <ul>
-      {items.map((item) => (
-        <li key={item.objectID}>
-          <span>
-            <a href={item.url}>{item.title}</a>
-          </span>
-          <span>{item.author}</span>
-          <span>{item.num_comments} comments</span>
-          <span>{item.points} points</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+// ✅ List uses Item
+const List = (props) => (
+  <ul>
+    {props.list.map((item) => (
+      <Item key={item.objectID} item={item} />
+    ))}
+  </ul>
+);
 
 const Search = ({ searchTerm, onSearch }) => {
   const handleChange = (event) => {
@@ -58,7 +43,26 @@ const Search = ({ searchTerm, onSearch }) => {
 function App() {
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  const filteredList = list.filter((item) =>
+  const stories = [
+    {
+      title: "React",
+      url: "https://reactjs.org/",
+      author: "Jordan Walke",
+      num_comments: 3,
+      points: 4,
+      objectID: 0,
+    },
+    {
+      title: "Redux",
+      url: "https://redux.js.org/",
+      author: "Dan Abramov, Andrew Clark",
+      num_comments: 2,
+      points: 5,
+      objectID: 1,
+    },
+  ];
+
+  const filteredList = stories.filter((item) =>
     item.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -67,7 +71,7 @@ function App() {
       <h1>My Hacker Stories</h1>
       <Search searchTerm={searchTerm} onSearch={setSearchTerm} />
       <hr />
-      <List items={filteredList} />
+      <List list={filteredList} />
     </div>
   );
 }
