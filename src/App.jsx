@@ -50,17 +50,26 @@ function App() {
   );
   const [stories, setStories] = React.useState([]);
 
-  // 2–5: Fetch from API when searchTerm changes
+  // 9. Add isLoading and isError states
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
+  // 2–5, 9–11: useEffect for fetching data
   React.useEffect(() => {
     if (!searchTerm) return;
+
+    setIsLoading(true);
+    setIsError(false); // Reset before new fetch
 
     fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json())
       .then((result) => {
-        setStories(result.hits); // 5: update stories
+        setStories(result.hits);
+        setIsLoading(false);
       })
       .catch(() => {
-        // Handle error (optional for now)
+        setIsError(true);
+        setIsLoading(false);
       });
   }, [searchTerm]);
 
@@ -79,7 +88,6 @@ function App() {
     setStories(newStories);
   };
 
-  // 6: Remove filteredList — stories now come from API
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -93,8 +101,15 @@ function App() {
       </InputWithLabel>
 
       <hr />
-      {/* 6: Pass API-fetched stories directly */}
-      <List list={stories} onRemoveItem={handleRemoveStory} />
+
+      {/* 12: Conditional rendering with && and ternary */}
+      {isError && <p>Something went wrong ...</p>}
+
+      {isLoading ? (
+        <p>Loading ...</p>
+      ) : (
+        <List list={stories} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 }
