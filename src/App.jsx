@@ -36,7 +36,12 @@ function List({ items }) {
   );
 }
 
-function Search({ searchTerm, onSearch }) {
+const Search = ({ searchTerm, onSearch }) => {
+  const handleChange = (event) => {
+    console.log(event.target.value);
+    onSearch(event.target.value);
+  };
+
   return (
     <div>
       <label htmlFor="search">Search: </label>
@@ -44,11 +49,11 @@ function Search({ searchTerm, onSearch }) {
         id="search"
         type="text"
         value={searchTerm}
-        onChange={(event) => onSearch(event.target.value)}
+        onChange={handleChange}
       />
     </div>
   );
-}
+};
 
 function App() {
   const [searchTerm, setSearchTerm] = React.useState("");
