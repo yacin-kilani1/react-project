@@ -1,6 +1,5 @@
 import * as React from "react";
 
-
 const Item = ({ item: { url, title, author, num_comments, points } }) => {
   console.log("Item renders");
   return (
@@ -15,7 +14,6 @@ const Item = ({ item: { url, title, author, num_comments, points } }) => {
   );
 };
 
-
 const List = ({ list }) => {
   console.log("List renders");
   return (
@@ -26,7 +24,6 @@ const List = ({ list }) => {
     </ul>
   );
 };
-
 
 const Search = ({ searchTerm, onSearch }) => {
   console.log("Search renders");
