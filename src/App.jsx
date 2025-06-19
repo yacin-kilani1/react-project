@@ -1,6 +1,5 @@
 import * as React from "react";
 
-// 1. Define the API endpoint
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
 const InputWithLabel = ({ id, value, onInputChange, type = "text", children }) => {
@@ -49,19 +48,24 @@ function App() {
     localStorage.getItem("search") || ""
   );
   const [stories, setStories] = React.useState([]);
-
-  // 9. Add isLoading and isError states
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
-  // 2–5, 9–11: useEffect for fetching data
+  // 16. New state to trigger fetching explicitly
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
   React.useEffect(() => {
-    if (!searchTerm) return;
+    localStorage.setItem("search", searchTerm);
+  }, [searchTerm]);
+
+  // 17. Fetching data depends on `url`
+  React.useEffect(() => {
+    if (!url) return;
 
     setIsLoading(true);
-    setIsError(false); // Reset before new fetch
+    setIsError(false);
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
       .then((result) => {
         setStories(result.hits);
@@ -71,14 +75,15 @@ function App() {
         setIsError(true);
         setIsLoading(false);
       });
-  }, [searchTerm]);
-
-  React.useEffect(() => {
-    localStorage.setItem("search", searchTerm);
-  }, [searchTerm]);
+  }, [url]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  // 15. Only fetch when button is clicked
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
   };
 
   const handleRemoveStory = (item) => {
@@ -100,9 +105,18 @@ function App() {
         <strong>Search: </strong>
       </InputWithLabel>
 
+      {/* 15. Submit button */}
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
+
       <hr />
 
-      {/* 12: Conditional rendering with && and ternary */}
+      {/* 12. Error + loading + success list */}
       {isError && <p>Something went wrong ...</p>}
 
       {isLoading ? (
